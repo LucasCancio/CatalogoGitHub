@@ -1,14 +1,9 @@
 ﻿using Catalogo_GitHub.Interfaces.Services;
 using Catalogo_GitHub.Models;
-using GraphQL.Types;
-using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Catalogo_GitHub.Services
@@ -34,13 +29,22 @@ namespace Catalogo_GitHub.Services
             return repositorios;
         }
 
-        public async Task<Repositorio> ConsultarRepositorio(string url)
+        public async Task<Repositorio> ConsultarRepositorio(string userName, string repositorioName)
+        {
+            var json = await Get($"repos/{userName}/{repositorioName}");
+
+            var repositorio = JsonConvert.DeserializeObject<Repositorio>(json);
+
+            return repositorio;
+        }
+
+        public async Task<List<Conteudo>> ConsultarContentUrl(string url)
         {
             var json = await Get(url);
 
-            var repositorio = JsonConvert.DeserializeObject<Content>(json);
+            var conteudos = JsonConvert.DeserializeObject<List<Conteudo>>(json);
 
-            return repositorio;
+            return conteudos;
         }
 
         private async Task<string> Get(string uri)

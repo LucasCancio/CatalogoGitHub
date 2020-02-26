@@ -1,17 +1,30 @@
 ﻿@model List<Repositorio>
-@foreach (var repositorio in Model)
-{
-    <div class="row mx-lg-2">
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">@repositorio.name</h5>
-                <p class="card-text">@repositorio.description</p>
-                <form id="selectLanguage" asp-controller="Repositorio" asp-action="Consultar" asp-route-url="@repositorio.contents_url" asp-route-returnUrl="@Context.Request.Path" method="post" role="form">
-                    <button type="submit" class="btn btn-primary">Acessar</button>
-                </form>
+<div class="row card-deck">
+    @for (int repIndex = 0; repIndex < Model.Count; repIndex++)
+    {
+        if (repIndex > 0 && repIndex % 3 == 0)
+        {
+        @:</div><div class="row card-deck">
+        }
+        Repositorio repositorio = Model[repIndex];
+        <div class="col-sm-6 col-lg-4 mb-3">
+            <div class="card mb-3 h-100">
+
+                <img class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">@repositorio.name</h5>
+                    <p class="card-text">@repositorio.description</p>
+                    <a class="btn btn-primary"
+                       asp-action="Index" asp-controller="Repositorio"
+                       asp-route-repositorioName="@repositorio.name"
+                       asp-route-userName="@repositorio.owner.login">Acessar</a>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Criado em @repositorio.created_at.ToShortDateString()</small>
+                    <small class="text-muted">Atualizado em @repositorio.updated_at.ToShortDateString()</small>
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
+</div>
 

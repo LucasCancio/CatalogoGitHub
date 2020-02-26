@@ -1,98 +1,93 @@
 ﻿using Catalogo_GitHub.Interfaces.Services;
+using Catalogo_GitHub.Models;
 using Catalogo_GitHub.Services;
+using Catalogo_GitHub.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System;
+using System.Threading.Tasks;
 
 namespace Catalogo_GitHub.Controllers
 {
+    [Route("[controller]")]
     public class RepositorioController : Controller
     {
         private readonly IRepositorioService _repositorioService;
+        private readonly IConteudoService _conteudoService;
+
+        private static Repositorio _repositorio= new Repositorio();
 
         public RepositorioController()
         {
             _repositorioService = new RepositorioService();
-        }
-        // GET: Repositorio
-        public ActionResult Index()
-        {
-            return View();
+            _conteudoService = new ConteudoService();
         }
 
-        [HttpPost]
-        public ActionResult Consultar(string url)
+        [Route("{userName}/{repositorioName}")]
+        public async Task<ActionResult> Index(string userName,string repositorioName)
         {
-            _repositorioService.ConsultarRepositorio(url);
-            return View();
+            if (_repositorio.name != repositorioName)
+                _repositorio = await _repositorioService.ConsultarRepositorio(userName, repositorioName);
+
+            var conteudos = await _repositorioService.ConsultarContentUrl(_repositorio.contents_url);
+
+            var repositorioViewModel = new RepositorioViewModel()
+            {
+                repositorio=_repositorio,
+                conteudos = conteudos
+            };
+
+            return View(repositorioViewModel);
         }
 
-        // GET: Repositorio/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Repositorio/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        [Route("{userName}/{repositorioName}/dir/{*path}")]
+        public async Task<IActionResult> Conteudo(string userName, string repositorioName, string path)
         {
             try
             {
-                // TODO: Add insert logic here
+                if (_repositorio.name != repositorioName)
+                    _repositorio = await _repositorioService.ConsultarRepositorio(repositorioName, userName);
 
-                return RedirectToAction(nameof(Index));
+                var conteudos = await _conteudoService.ListarConteudos(userName, repositorioName, path);
+
+                var model = new RepositorioViewModel()
+                {
+                    repositorio=_repositorio,
+                    conteudos=conteudos
+                };
+
+                return View("Index", model);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest("Erro: " + ex.Message);
             }
+
         }
-
-        // GET: Repositorio/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Repositorio/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Repositorio/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Repositorio/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        [Route("{userName}/{repositorioName}/file/{*path}")]
+        public async Task<IActionResult> Arquivo(string userName, string repositorioName, string path)
         {
             try
             {
-                // TODO: Add delete logic here
+                if (_repositorio.name != repositorioName)
+                    _repositorio = await _repositorioService.ConsultarRepositorio(repositorioName, userName);
 
-                return RedirectToAction(nameof(Index));
+                var arquivo = await _conteudoService.ConsultarArquivo(userName, repositorioName, path);
+
+                var model = new ArquivoViewModel()
+                {
+                    repositorio = _repositorio,
+                    arquivo = arquivo
+                };
+
+                return View(model);
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return BadRequest("Erro: " + ex.Message);
             }
+
         }
     }
 }

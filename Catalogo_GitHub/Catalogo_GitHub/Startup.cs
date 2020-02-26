@@ -51,7 +51,18 @@ namespace Catalogo_GitHub
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                //endpoints.MapControllerRoute(
+                //    name: "repositorio",
+                //    pattern: "{controller=Repositorio}/{action=Index}/{userName}/{repositorioName}");
+
+                //endpoints.MapControllerRoute(
+                //    name: "repositorioConteudo",
+                //    pattern: "{controller=Repositorio}/{action=Conteudo}/{userName}/{repositorioName}/{*path}");
             });
+
+
+
         }
     }
 }

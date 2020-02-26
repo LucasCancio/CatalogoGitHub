@@ -5,12 +5,10 @@ using System.Threading.Tasks;
 
 namespace Catalogo_GitHub.Models
 {
-    public class RepositorioDetails
+    public class RepositorioViewModel
     {
         public Repositorio repositorio { get; set; }
-        public List<Content> contents { get; set; }
-
-
+        public List<Conteudo> conteudos { get; set; }
     }
     
 }

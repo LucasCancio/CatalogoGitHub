@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Catalogo_GitHub.Models;
 using Catalogo_GitHub.Services;
 using Catalogo_GitHub.Interfaces.Services;
+using Newtonsoft.Json;
 
 namespace Catalogo_GitHub.Controllers
 {
@@ -52,6 +53,7 @@ namespace Catalogo_GitHub.Controllers
             }
 
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

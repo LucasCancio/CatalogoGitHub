@@ -131,3 +131,5 @@ C:\Users\Lucas\Desktop\Projetcs-master\CatalogoGitHub\Catalogo_GitHub\Catalogo_G
 C:\Users\Lucas\Desktop\Projetcs-master\CatalogoGitHub\Catalogo_GitHub\Catalogo_GitHub\bin\Debug\netcoreapp3.1\System.Reactive.Interfaces.dll
 C:\Users\Lucas\Desktop\Projetcs-master\CatalogoGitHub\Catalogo_GitHub\Catalogo_GitHub\bin\Debug\netcoreapp3.1\System.Reactive.Linq.dll
 C:\Users\Lucas\Desktop\Projetcs-master\CatalogoGitHub\Catalogo_GitHub\Catalogo_GitHub\obj\Debug\netcoreapp3.1\Razor\Views\Home\_Repositorios.cshtml.g.cs
+C:\Users\Lucas\Desktop\Projetcs-master\CatalogoGitHub\Catalogo_GitHub\Catalogo_GitHub\obj\Debug\netcoreapp3.1\Razor\Views\Repositorio\Index.cshtml.g.cs
+C:\Users\Lucas\Desktop\Projetcs-master\CatalogoGitHub\Catalogo_GitHub\Catalogo_GitHub\obj\Debug\netcoreapp3.1\Razor\Views\Repositorio\Arquivo.cshtml.g.cs

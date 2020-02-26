@@ -1,0 +1,47 @@
+﻿@model Catalogo_GitHub.Models.RepositorioViewModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<div>
+    <h4>@Model.repositorio.name</h4>
+    <h5>@Model.repositorio.description</h5>
+    @foreach (var conteudo in Model.conteudos)
+    {
+        <div>
+            @if (conteudo.type == "file")
+            {
+                <i class="fas fa-file-alt"></i>
+                @Html.ActionLink(conteudo.name, "Arquivo", "Repositorio", new
+                {
+                    userName = Model.repositorio.owner.login,
+                    repositorioName = Model.repositorio.name,
+                    path = conteudo.path
+                })
+            }
+            else if (conteudo.type == "dir")
+            {
+                <i class="fas fa-folder"></i>
+                @*<a asp-action="Conteudo" asp-controller="Repositorio"
+                    asp-route-repositorioName="@Model.repositorio.name"
+                    asp-route-userName="@Model.repositorio.owner.login"
+                    asp-route-path="@conteudo.path"
+                    >@conteudo.name</a>*@
+                @Html.ActionLink(conteudo.name, "Conteudo", "Repositorio", new
+                {
+                    userName = Model.repositorio.owner.login,
+                    repositorioName = Model.repositorio.name,
+                    path = conteudo.path
+                })
+            }
+        </div>
+    }
+    <hr />
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
