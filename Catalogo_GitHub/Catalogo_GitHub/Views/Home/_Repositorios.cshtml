@@ -1,12 +1,12 @@
-﻿@model List<Repositorio>
+﻿@model Catalogo_GitHub.ViewModel.CatalogoViewModel
 <div class="row card-deck">
-    @for (int repIndex = 0; repIndex < Model.Count; repIndex++)
+    @for (int repIndex = 0; repIndex < Model.repositorios.Count; repIndex++)
     {
         if (repIndex > 0 && repIndex % 3 == 0)
         {
         @:</div><div class="row card-deck">
         }
-        Repositorio repositorio = Model[repIndex];
+        Repositorio repositorio = Model.repositorios[repIndex];
         <div class="col-sm-6 col-lg-4 mb-3">
             <div class="card mb-3 h-100">
 
@@ -14,17 +14,31 @@
                 <div class="card-body">
                     <h5 class="card-title">@repositorio.name</h5>
                     <p class="card-text">@repositorio.description</p>
+                    <p class="card-text">@repositorio.language</p>
                     <a class="btn btn-primary"
                        asp-action="Index" asp-controller="Repositorio"
                        asp-route-repositorioName="@repositorio.name"
                        asp-route-userName="@repositorio.owner.login">Acessar</a>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Criado em @repositorio.created_at.ToShortDateString()</small>
-                    <small class="text-muted">Atualizado em @repositorio.updated_at.ToShortDateString()</small>
+                    <p class="card-text">
+                        <small class="text-muted">Criado em @repositorio.created_at.ToShortDateString()</small>
+                    </p>
+                    <p class="card-text">
+                        <small class="text-muted">Atualizado em @repositorio.updated_at.ToShortDateString()</small>
+                    </p>
                 </div>
             </div>
         </div>
     }
 </div>
-
+<nav>
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.totalPages; i++)
+        {
+            <li class="page-item" id="page_@i">
+                <a class="page-link" href="javascript:PagerClick(@i);">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

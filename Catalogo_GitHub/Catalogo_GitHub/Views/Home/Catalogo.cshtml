@@ -1,4 +1,4 @@
-﻿@model List<Catalogo_GitHub.Models.Repositorio>
+﻿@model Catalogo_GitHub.ViewModel.CatalogoViewModel
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,8 +19,7 @@
                 <input type="text" id="txtPesquisar" />
             </div>
             <div id="divRep" class="container">
-            </div>        
-
+            </div>           
         </div>
     </main>
     <!-- Footer -->
@@ -71,6 +70,23 @@
     <!-- Footer -->
     @section Scripts{
         <script src="~/js/Repositorio.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                ListarRepositorios(1,@Model.pageSize)
+            });
+
+            $("#txtPesquisar").keyup(function () {
+                ListarRepositorios(1,@Model.pageSize)
+            });
+
+            function PagerClick(index) {
+                $('.page-item').removeClass('active')
+                ListarRepositorios(index,@Model.pageSize)
+            }
+        </script>
+
+
     }
 
 

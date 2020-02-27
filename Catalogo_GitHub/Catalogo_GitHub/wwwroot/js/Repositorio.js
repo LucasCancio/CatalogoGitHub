@@ -1,25 +1,18 @@
-﻿$(document).ready(function () {
-    ListarRepositorios()
-});
-
-$("#txtPesquisar").keyup(function () {
-    ListarRepositorios()
-});
-
-function ListarRepositorios() {
+﻿function ListarRepositorios(pageNumber, pageSize) {
     let query = $("#txtPesquisar").val()
 
-    if (query=="") {
-        $.post("./ListarRepositorios", function (data) {
-                $("#divRep").html(data);
-        });
-    }
-    else {
-        $.post("./ListarRepositorios",
-            `query=${query}`, function (data) {
-                $("#divRep").html(data);
-            });
+    let parameters = `pageNumber=${pageNumber}&pageSize=${pageSize}`
+
+    if (query != "") {
+        parameters += `&query=${query}`     
     }
 
+    $.post("./ListarRepositorios",
+       parameters, function (data) {
+           $("#divRep").html(data);
+           $(`#page_${pageNumber}`).addClass('active')
+    });
+
+    
     
 }

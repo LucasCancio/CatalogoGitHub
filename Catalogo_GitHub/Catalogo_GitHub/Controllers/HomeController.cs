@@ -9,6 +9,7 @@ using Catalogo_GitHub.Models;
 using Catalogo_GitHub.Services;
 using Catalogo_GitHub.Interfaces.Services;
 using Newtonsoft.Json;
+using Catalogo_GitHub.ViewModel;
 
 namespace Catalogo_GitHub.Controllers
 {
@@ -26,24 +27,45 @@ namespace Catalogo_GitHub.Controllers
         {
             return View();
         }
-
-        public async Task<IActionResult> Catalogo()
+        public async Task<IActionResult> Catalogo(string userName= "skevy")
         {
-            _repositorios = await _repositorioService.ListarRepositorios("lucascancio");
-            return View();
-        }
-        [HttpPost]
+            _repositorios = await _repositorioService.ListarRepositorios(userName);
+            var model = new CatalogoViewModel()
+            {
+                repositorios = _repositorios,
+                length = _repositorios.Count,
+                pageSize = 9//Quantos por pagina
+            };
+            var totalPages = (double)model.length / model.pageSize;
+            model.totalPages = (int)Math.Ceiling(totalPages);
 
-        public IActionResult ListarRepositorios(string query = "")
+
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult ListarRepositorios(int pageNumber, int pageSize, string query = "")
         {
             try
             {
-                //List<Repositorio> repositorios = (List<Repositorio>)TempData["repositorios"];
-
-                var model = !string.IsNullOrEmpty(query) ? (from repo in _repositorios
-                                                           where repo.name.ToUpper().Contains(query.ToUpper())
-                                                           select repo).ToList()
+                var repositorios = !string.IsNullOrEmpty(query) ? (from repo in _repositorios
+                                                                   where repo.name.ToUpper().Contains(query.ToUpper())
+                                                                   select repo).ToList()
                                                            : _repositorios;
+
+                var model = new CatalogoViewModel()
+                {
+                    length = repositorios.Count,
+                    pageSize = 9//Quantos por pagina
+                };
+
+                var totalPages = (double)model.length / model.pageSize;
+                model.totalPages = (int)Math.Ceiling(totalPages);
+
+                repositorios = repositorios.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+                model.repositorios = repositorios;
 
                 return PartialView("_Repositorios", model);
             }

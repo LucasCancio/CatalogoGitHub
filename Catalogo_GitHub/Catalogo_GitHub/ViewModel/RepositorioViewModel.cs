@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Catalogo_GitHub.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Catalogo_GitHub.Models
+namespace Catalogo_GitHub.ViewModel
 {
     public class RepositorioViewModel
     {

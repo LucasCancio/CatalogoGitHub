@@ -65,11 +65,15 @@ namespace Catalogo_GitHub.Controllers
             }
 
         }
-        [Route("{userName}/{repositorioName}/file/{*path}")]
+        [HttpPost]
+        //[Route("{userName}/{repositorioName}/file/{*path}")]
+        [Route("{userName}/{repositorioName}/file")]
         public async Task<IActionResult> Arquivo(string userName, string repositorioName, string path)
         {
             try
             {
+                //var path = HttpContext.Session.GetString("path");
+
                 if (_repositorio.name != repositorioName)
                     _repositorio = await _repositorioService.ConsultarRepositorio(repositorioName, userName);
 
