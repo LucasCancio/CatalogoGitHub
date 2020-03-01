@@ -16,7 +16,6 @@ namespace Catalogo_GitHub.Controllers
         private readonly IRepositorioService _repositorioService;
         private readonly IConteudoService _conteudoService;
 
-        private static Repositorio _repositorio= new Repositorio();
 
         public RepositorioController()
         {
@@ -25,16 +24,15 @@ namespace Catalogo_GitHub.Controllers
         }
 
         [Route("{userName}/{repositorioName}")]
-        public async Task<ActionResult> Index(string userName,string repositorioName)
+        public async Task<ActionResult> Index(string userName, string repositorioName)
         {
-            if (_repositorio.name != repositorioName)
-                _repositorio = await _repositorioService.ConsultarRepositorio(userName, repositorioName);
+            var repositorio = await getRepository(userName, repositorioName);
 
-            var conteudos = await _repositorioService.ConsultarContentUrl(_repositorio.contents_url);
+            var conteudos = await _repositorioService.ConsultarContentUrl(repositorio.contents_url);
 
             var repositorioViewModel = new RepositorioViewModel()
             {
-                repositorio=_repositorio,
+                repositorio = repositorio,
                 conteudos = conteudos
             };
 
@@ -46,15 +44,14 @@ namespace Catalogo_GitHub.Controllers
         {
             try
             {
-                if (_repositorio.name != repositorioName)
-                    _repositorio = await _repositorioService.ConsultarRepositorio(repositorioName, userName);
+                var repositorio = await getRepository(userName, repositorioName);
 
                 var conteudos = await _conteudoService.ListarConteudos(userName, repositorioName, path);
 
                 var model = new RepositorioViewModel()
                 {
-                    repositorio=_repositorio,
-                    conteudos=conteudos
+                    repositorio = repositorio,
+                    conteudos = conteudos
                 };
 
                 return View("Index", model);
@@ -66,22 +63,18 @@ namespace Catalogo_GitHub.Controllers
 
         }
         [HttpPost]
-        //[Route("{userName}/{repositorioName}/file/{*path}")]
         [Route("{userName}/{repositorioName}/file")]
         public async Task<IActionResult> Arquivo(string userName, string repositorioName, string path)
         {
             try
             {
-                //var path = HttpContext.Session.GetString("path");
-
-                if (_repositorio.name != repositorioName)
-                    _repositorio = await _repositorioService.ConsultarRepositorio(repositorioName, userName);
+                var repositorio = await getRepository(userName, repositorioName);
 
                 var arquivo = await _conteudoService.ConsultarArquivo(userName, repositorioName, path);
 
                 var model = new ArquivoViewModel()
                 {
-                    repositorio = _repositorio,
+                    repositorio = repositorio,
                     arquivo = arquivo
                 };
 
@@ -92,6 +85,31 @@ namespace Catalogo_GitHub.Controllers
                 return BadRequest("Erro: " + ex.Message);
             }
 
+        }
+
+        private async Task<Repositorio> getRepository(string userName, string repositorioName)
+        {
+            var repositorio = new Repositorio();
+            var json = HttpContext.Session.GetString("repositorio");
+            if (string.IsNullOrEmpty(json))
+            {
+                repositorio = await _repositorioService.ConsultarRepositorio(userName, repositorioName);
+                json = JsonConvert.SerializeObject(repositorio);
+                HttpContext.Session.SetString("repositorio", json);
+            }
+            else
+            {
+                repositorio = JsonConvert.DeserializeObject<Repositorio>(json);
+                if (repositorio.name != repositorioName)
+                {
+                    repositorio = await _repositorioService.ConsultarRepositorio(userName, repositorioName);
+                    json = JsonConvert.SerializeObject(repositorio);
+                    HttpContext.Session.SetString("repositorio", json);
+                }
+
+            }
+
+            return repositorio;
         }
     }
 }

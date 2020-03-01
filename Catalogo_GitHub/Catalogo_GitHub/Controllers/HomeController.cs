@@ -10,13 +10,13 @@ using Catalogo_GitHub.Services;
 using Catalogo_GitHub.Interfaces.Services;
 using Newtonsoft.Json;
 using Catalogo_GitHub.ViewModel;
+using Microsoft.AspNetCore.Http;
 
 namespace Catalogo_GitHub.Controllers
 {
     public class HomeController : Controller
     {
         private readonly IRepositorioService _repositorioService;
-        private static List<Repositorio> _repositorios;
 
         public HomeController()
         {
@@ -29,11 +29,13 @@ namespace Catalogo_GitHub.Controllers
         }
         public async Task<IActionResult> Catalogo(string userName= "skevy")
         {
-            _repositorios = await _repositorioService.ListarRepositorios(userName);
+            var repositorios = await _repositorioService.ListarRepositorios(userName);
+            HttpContext.Session.SetString("repositorios", JsonConvert.SerializeObject(repositorios));
+
             var model = new CatalogoViewModel()
             {
-                repositorios = _repositorios,
-                length = _repositorios.Count,
+                repositorios = repositorios,
+                length = repositorios.Count,
                 pageSize = 9//Quantos por pagina
             };
             var totalPages = (double)model.length / model.pageSize;
@@ -49,10 +51,15 @@ namespace Catalogo_GitHub.Controllers
         {
             try
             {
-                var repositorios = !string.IsNullOrEmpty(query) ? (from repo in _repositorios
-                                                                   where repo.name.ToUpper().Contains(query.ToUpper())
-                                                                   select repo).ToList()
-                                                           : _repositorios;
+                var json = HttpContext.Session.GetString("repositorios");
+                var repositorios = JsonConvert.DeserializeObject<List<Repositorio>>(json);
+
+                if (!string.IsNullOrEmpty(query))
+                {
+                    repositorios = (from repo in repositorios
+                                    where repo.name.ToUpper().Contains(query.ToUpper())
+                                    select repo).ToList();
+                }
 
                 var model = new CatalogoViewModel()
                 {
